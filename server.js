@@ -31,17 +31,21 @@ server.on('connection', (ws) => {
     // Send connection message to client
     ws.send(JSON.stringify({ type: 'connection', data: letter }));
 
-    // Send a 'ping' message to detect Unity client
-    ws.send(JSON.stringify({ type: 'ping' }));
+    // Send a 'ping' message after a short delay to detect Unity client
+    setTimeout(() => {
+        ws.send(JSON.stringify({ type: 'ping' }));
+    }, 50); // Delay in milliseconds
 
     // Add the client to webClients temporarily
     webClients[letter] = ws;
 
     ws.on('message', (message) => {
-        console.log(`Received message from client ${ws.clientLetter}: ${message}`);
+        // Convert message to string in case it's a Buffer
+        let messageString = message.toString();
+        console.log(`Received message from client ${ws.clientLetter}: ${messageString}`);
 
         // Unity client responds with 'pong' to 'ping'
-        if (message === 'pong') {
+        if (messageString.trim() === 'pong') {
             ws.isUnityClient = true;
             unityClient = ws;
             console.log('Unity client connected');
@@ -53,9 +57,9 @@ server.on('connection', (ws) => {
         // Try to parse the message as JSON
         let msg;
         try {
-            msg = JSON.parse(message);
+            msg = JSON.parse(messageString);
         } catch (error) {
-            console.log('Received non-JSON message:', message);
+            console.log('Received non-JSON message:', messageString);
             return;
         }
 
