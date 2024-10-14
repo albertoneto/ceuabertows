@@ -12,5 +12,8 @@
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
 }
