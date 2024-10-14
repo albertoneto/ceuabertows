@@ -28,12 +28,12 @@ wss.on('connection', (ws) => {
     });
 });
 
-// Adiciona uma rota básica para verificar se o servidor está rodando
+//Adiciona uma rota básica para verificar se o servidor está rodando
 app.get('/', (req, res) => {
     res.send('Servidor WebSocket está rodando!');
 });
 
-// Inicia o servidor HTTP e WebSocket
+//Inicia o servidor HTTP e WebSocket
 server.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
