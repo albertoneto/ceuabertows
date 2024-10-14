@@ -68,14 +68,17 @@ server.on('connection', (ws) => {
                     webClient.send(JSON.stringify(msg));
                 }
             } else {
-                // Optionally handle messages without a 'letter'
                 console.log('Received message from Unity client without a letter:', msg);
             }
         } else {
             // Message from web client
-            // Forward to Unity client
+            // Wrap the message in the expected format
             if (unityClient && unityClient.readyState === WebSocket.OPEN) {
-                unityClient.send(JSON.stringify(msg));
+                const wrappedMessage = {
+                    type: 'command',
+                    data: JSON.stringify(msg)
+                };
+                unityClient.send(JSON.stringify(wrappedMessage));
             } else {
                 console.log('Unity client is not connected');
             }
