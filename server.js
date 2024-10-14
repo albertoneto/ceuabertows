@@ -4,7 +4,6 @@ const http = require('http');
 
 const app = express();
 const server = http.createServer(app);
-const port = process.env.PORT || 3000;
 
 // Inicia o servidor WebSocket
 const wss = new WebSocket.Server({ server });
@@ -34,6 +33,6 @@ app.get('/', (req, res) => {
 });
 
 //Inicia o servidor HTTP e WebSocket
-server.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
+server.listen(443, () => {
+    console.log(`Servidor rodando na porta 443`);
 });
