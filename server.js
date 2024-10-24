@@ -44,22 +44,22 @@ server.on('connection', (ws) => {
         let messageString = message.toString();
         console.log(`Received message from client ${ws.clientLetter}: ${messageString}`);
 
-        // Tenta parsear a mensagem como JSON
-        let msg;
-        try {
-            msg = JSON.parse(messageString);
-        } catch (error) {
-            console.log('Received non-JSON message:', messageString);
-            return;
-        }
-
         // Unity client responds with 'pong' to 'ping'
-        if (msg.type === 'pong') {
+        if (messageString.trim() === 'pong') {
             ws.isUnityClient = true;
             unityClient = ws;
             console.log('Unity client connected');
             // Remove from webClients since it's the Unity client
             delete webClients[ws.clientLetter];
+            return;
+        }
+
+        // Try to parse the message as JSON
+        let msg;
+        try {
+            msg = JSON.parse(messageString);
+        } catch (error) {
+            console.log('Received non-JSON message:', messageString);
             return;
         }
 
