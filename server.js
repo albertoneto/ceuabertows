@@ -27,7 +27,7 @@ server.on('connection', (ws) => {
     ws.send(JSON.stringify({ type: 'connection', data: letter }));
 
     setTimeout(() => {
-        ws.send(JSON.stringify({ type: 'ping' }));
+        ws.send(JSON.stringify({ type: 'ping', data: null }));
     }, 300);
 
     webClients[letter] = ws;
@@ -36,7 +36,7 @@ server.on('connection', (ws) => {
         let messageString = message.toString();
         console.log(`Received message from client ${ws.clientLetter}: ${messageString}`);
 
-        if (messageString.trim() === 'pong') {
+        if (messageString.type === 'pong') {
             ws.isUnityClient = true;
             unityClient = ws;
             console.log('Unity client connected');
