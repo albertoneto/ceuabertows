@@ -1,16 +1,13 @@
 const WebSocket = require('ws');
 const PORT = process.env.PORT || 3000;
 
-// Create a WebSocket server
 const server = new WebSocket.Server({ port: PORT }, () => {
     console.log(`WebSocket server is running on port ${PORT}`);
 });
 
-// Store connected clients
-let unityClient = null;           // The Unity client
-let webClients = {};              // Map letters to web clients
+let unityClient = null;
+let webClients = {};
 
-// Function to generate a unique letter for each web client
 function generateUniqueLetter() {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let letter;
@@ -23,38 +20,30 @@ function generateUniqueLetter() {
 server.on('connection', (ws) => {
     console.log('New client connected');
 
-    // Assign a unique letter to the client
     const letter = generateUniqueLetter();
     ws.clientLetter = letter;
     ws.isUnityClient = false;
 
-    // Send connection message to client
     ws.send(JSON.stringify({ type: 'connection', data: letter }));
 
-    // Send a 'ping' message after a short delay to detect Unity client
     setTimeout(() => {
         ws.send(JSON.stringify({ type: 'ping' }));
-    }, 50); // Delay in milliseconds
+    }, 300);
 
-    // Add the client to webClients temporarily
     webClients[letter] = ws;
 
     ws.on('message', (message) => {
-        // Convert message to string in case it's a Buffer
         let messageString = message.toString();
         console.log(`Received message from client ${ws.clientLetter}: ${messageString}`);
 
-        // Unity client responds with 'pong' to 'ping'
         if (messageString.trim() === 'pong') {
             ws.isUnityClient = true;
             unityClient = ws;
             console.log('Unity client connected');
-            // Remove from webClients since it's the Unity client
             delete webClients[ws.clientLetter];
             return;
         }
 
-        // Try to parse the message as JSON
         let msg;
         try {
             msg = JSON.parse(messageString);
@@ -64,8 +53,6 @@ server.on('connection', (ws) => {
         }
 
         if (ws.isUnityClient) {
-            // Message from Unity client
-            // Forward to specific web client based on 'letter' field
             if (msg.letter && webClients[msg.letter]) {
                 const webClient = webClients[msg.letter];
                 if (webClient.readyState === WebSocket.OPEN) {
@@ -75,8 +62,6 @@ server.on('connection', (ws) => {
                 console.log('Received message from Unity client without a letter:', msg);
             }
         } else {
-            // Message from web client
-            // Wrap the message in the expected format
             if (unityClient && unityClient.readyState === WebSocket.OPEN) {
                 const wrappedMessage = {
                     type: 'command',
