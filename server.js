@@ -27,7 +27,7 @@ server.on('connection', (ws) => {
     ws.send(JSON.stringify({ type: 'connection', data: letter }));
 
     setTimeout(() => {
-        ws.send(JSON.stringify({ type: 'ping', data: null }));
+        ws.send(JSON.stringify({ type: 'ping'}));
     }, 300);
 
     webClients[letter] = ws;
