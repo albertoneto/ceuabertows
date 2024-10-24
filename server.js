@@ -69,7 +69,7 @@ server.on('connection', (ws) => {
             if (msg.letter && webClients[msg.letter]) {
                 const webClient = webClients[msg.letter];
                 if (webClient.readyState === WebSocket.OPEN) {
-                    webClient.send(msg);
+                    webClient.send(JSON.stringify(msg));
                 }
             } else {
                 console.log('Received message from Unity client without a letter:', msg);
