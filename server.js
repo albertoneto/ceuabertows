@@ -37,6 +37,7 @@ server.on('connection', (ws) => {
         console.log(`Received message from client ${ws.clientLetter}: ${messageString}`);
 
         if (messageString.type === 'pong') {
+            console.log('pong');
             ws.isUnityClient = true;
             unityClient = ws;
             console.log('Unity client connected');
