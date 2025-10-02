@@ -47,6 +47,7 @@ server.on('connection', (ws) => {
             for (const letter in webClients) {
                 const client = webClients[letter];
                 if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ type: 'reset' }));
                     client.close();
                 }
                 delete webClients[letter];
