@@ -36,7 +36,23 @@ server.on('connection', (ws) => {
         let messageString = message.toString();
         console.log(`Received message from client ${ws.clientLetter}: ${messageString}`);
 
-        if (messageString.trim() === 'pong') {
+        if (messageString.trim() === 'restart') {
+            console.log('Reiniciando todas as conexões...');
+
+            if (unityClient && unityClient.readyState === WebSocket.OPEN) {
+                unityClient.close();
+            }
+            unityClient = null;
+
+            for (const letter in webClients) {
+                const client = webClients[letter];
+                if (client.readyState === WebSocket.OPEN) {
+                    client.close();
+                }
+                delete webClients[letter];
+            }
+            return;
+        }else if (messageString.trim() === 'pong') {
             ws.isUnityClient = true;
             unityClient = ws;
             console.log('Unity client connected');
